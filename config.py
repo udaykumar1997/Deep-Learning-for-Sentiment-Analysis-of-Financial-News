@@ -4,7 +4,7 @@
 # In[11]:
 
 
-companies_of_interest = ["Twitter", "Ebix", "Company3","Loki"]
+companies_of_interest = ["Twitter", "Ebix", "Company3","Loki","Blockchain"]
 
 
 # In[12]:

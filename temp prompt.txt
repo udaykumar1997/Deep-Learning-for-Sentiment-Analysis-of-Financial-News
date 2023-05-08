@@ -1,12 +1,30 @@
-I want the background of the following plot to be white:
-fig1, ax1 = plt.subplots()
-ax1.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
-ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-plt.title('Sources of Articles')
-plt.show()
+I don't want the following code block to ask the user for any input, instead I want it to return the average polarity scores for each company.
+Code:
+# define a function to calculate sentiment polarity using TextBlob
+def calculate_sentiment(text):
+    blob = TextBlob(text)
+    return blob.sentiment.polarity
 
+# calculate sentiment polarity for each row in the dataframe
+df['polarity'] = df['summary'].apply(calculate_sentiment)
 
+# define the features and target for the scikit-learn model
+X = df['summary']
+y = df['polarity'].apply(lambda x: 'positive' if x > 0 else 'negative' if x < 0 else 'neutral')
 
+# convert text to numerical features using CountVectorizer
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(X)
+
+# train a naive Bayes classifier on the labeled dataset
+clf = MultinomialNB()
+clf.fit(X, y)
+
+# predict sentiment for a new text
+new_text = input("Enter a sentence:")
+new_text_features = vectorizer.transform([new_text])
+new_text_sentiment = clf.predict(new_text_features)[0]
+print(new_text_sentiment)
 
 
 
@@ -14,22 +32,35 @@ plt.show()
 Information about the dataframe, for additional context.
 Commands:
 df.info()
-df.describe()
 
 Output:
 <class 'pandas.core.frame.DataFrame'>
-RangeIndex: 98 entries, 0 to 97
-Data columns (total 4 columns):
- #   Column   Non-Null Count  Dtype 
----  ------   --------------  ----- 
- 0   title    98 non-null     object
- 1   summary  98 non-null     object
- 2   source   98 non-null     object
- 3   company  98 non-null     object
-dtypes: object(4)
-memory usage: 3.2+ KB
-title	summary	source	company
-count	98	98	98	98
-unique	88	88	1	9
-top	‘Fight with us’: KC medical students, doctors ...	Kansas City area medical students held a Satur...	Yahoo News	Block
-freq	2	2	98	20
+RangeIndex: 1128 entries, 0 to 1127
+Data columns (total 5 columns):
+ #   Column    Non-Null Count  Dtype  
+---  ------    --------------  -----  
+ 0   title     1128 non-null   object 
+ 1   summary   1128 non-null   object 
+ 2   source    1128 non-null   object 
+ 3   company   1128 non-null   object 
+ 4   polarity  1128 non-null   float64
+dtypes: float64(1), object(4)
+memory usage: 44.2+ KB
+
+Commands:
+df
+
+Output:
+	title	summary	source	company	polarity
+0	nba twitter reacts denver nuggets' nikola joki...	nba twitter thoughts incident nikola jokic pho...	Yahoo News	Twitter	0.000000
+1	twitter criticized allowing texas shooting ima...	graphic images began circulating twitter showi...	Yahoo News	Twitter	-0.400000
+2	you’ll never walk alone performance coronation...	song close link liverpool football club, whose...	Yahoo News	Twitter	0.000000
+3	twitter memed katy perry super lost coronation...	video katy perry struggling find seat #coronat...	Yahoo News	Twitter	0.000000
+4	new twitter rules expose election offices spoo...	election commission applied weeks ago gray che...	Yahoo News	Twitter	0.136364
+...	...	...	...	...	...
+1123	conclusion: investors, workers, local communit...	one key thread experienced research hope. even...	Hindenburg Research	Lordstown	0.018939
+1124	disclosure: short shares lordstown motors corp...		Hindenburg Research	Lordstown	0.000000
+1125	appendix a: background steve burns	typically, upstart auto companies rely heavily...	Hindenburg Research	Lordstown	0.045746
+1126	legal disclaimer	use hindenburg research’s research risk. event...	Hindenburg Research	Lordstown	0.138596
+1127	262 thoughts “the lordstown motors mirage: fak...	fisker. fsr another scam misleading investors ...	Hindenburg Research	Lordstown	0.108431
+1128 rows × 5 columns

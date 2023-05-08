@@ -1,44 +1,9 @@
-The following code block appears to be scraping data from Hindenburg Research website. But it seems to be creating a new df instead of appending to the previous df. I'm afraid it might overwrite/erase the previously scraped data from yahoo News which is currently in df.
-Also, the format appears to be incoherent with the previous df.
-
-Code Block:
-search_term = input("Enter a search term: ")
-# Get user input for the URL
-url = f'https://hindenburgresearch.com/{search_term}'
-# response = requests.get(url)
-# Send a GET request to the URL and parse the HTML content
-response = requests.get(url)
-soup = BeautifulSoup(response.text, 'html.parser')
-
-# Extract all headers and their related paragraphs
-headers = {}
-current_header = None
-for element in soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']):
-    if element.name.startswith('h'):
-        # If a new header is found, update the current header
-        current_header = element.text.strip()
-        headers[current_header] = []
-    elif current_header is not None:
-        # If a paragraph is found, add it to the list of paragraphs for the current header
-        headers[current_header].append(element.text.strip())
-
-# Create a list of dictionaries with the title, summary and source information
-data = []
-for header, paragraphs in headers.items():
-    data.append({
-        'title': header,
-        'summary': ' '.join(paragraphs),
-        'source': url
-    })
-
-# Create a dataframe from the list of dictionaries
-df = pd.DataFrame(data)
-
-# Print the dataframe
-print(df)
-
-
-
+I want the background of the following plot to be white:
+fig1, ax1 = plt.subplots()
+ax1.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90)
+ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+plt.title('Sources of Articles')
+plt.show()
 
 
 

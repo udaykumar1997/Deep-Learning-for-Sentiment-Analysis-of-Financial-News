@@ -1,20 +1,49 @@
-Could you please take a look at the following code block too, it appears to be generating a bunch of random information and I'm not able to make any sense of it.
-Please draft a better, more sensible version of this code block.
+The following code block appears to be scraping data from Hindenburg Research website. But it seems to be creating a new df instead of appending to the previous df. I'm afraid it might overwrite/erase the previously scraped data from yahoo News which is currently in df.
+Also, the format appears to be incoherent with the previous df.
 
 Code Block:
-for company in companies:
-    # Filter the data for the specific company
-    company_data = df[df['company'] == company]
+search_term = input("Enter a search term: ")
+# Get user input for the URL
+url = f'https://hindenburgresearch.com/{search_term}'
+# response = requests.get(url)
+# Send a GET request to the URL and parse the HTML content
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
 
-    # Data visualization
-    plt.figure(figsize=(10, 6))
-    sns.countplot(y="title", data=company_data)
-    plt.xlabel("Number of Articles")
-    plt.ylabel("Article Title")
-    plt.title(f"Yahoo News Article Count Frequency for {company}")
-    plt.xticks(rotation=90)
-    plt.savefig(f"v-Article Count Frequency-YN-{company}.png", dpi=300, bbox_inches='tight')
-    plt.show()
+# Extract all headers and their related paragraphs
+headers = {}
+current_header = None
+for element in soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p']):
+    if element.name.startswith('h'):
+        # If a new header is found, update the current header
+        current_header = element.text.strip()
+        headers[current_header] = []
+    elif current_header is not None:
+        # If a paragraph is found, add it to the list of paragraphs for the current header
+        headers[current_header].append(element.text.strip())
+
+# Create a list of dictionaries with the title, summary and source information
+data = []
+for header, paragraphs in headers.items():
+    data.append({
+        'title': header,
+        'summary': ' '.join(paragraphs),
+        'source': url
+    })
+
+# Create a dataframe from the list of dictionaries
+df = pd.DataFrame(data)
+
+# Print the dataframe
+print(df)
+
+
+
+
+
+
+
+
 
 
 Information about the dataframe, for additional context.

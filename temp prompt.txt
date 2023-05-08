@@ -1,0 +1,49 @@
+I have a certain code block which generates barplots of "most frequent words" observed. The prblem is, it generates the same graph for every single company. 
+
+Code Block:
+for company in config.companies_of_interest:
+    # Join all titles and summaries into a single string
+    text = " ".join(df["title"].tolist() + df["summary"].tolist())
+
+    # Split the text into individual words
+    words = text.split()
+    words = [word for word in words if word.lower() not in stop_words]
+    # Count the frequency of each word
+    word_counts = Counter(words)
+
+    # Create a bar chart of the 20 most common words
+    most_common_words = word_counts.most_common(20)
+    x = [word[0] for word in most_common_words]
+    y = [word[1] for word in most_common_words]
+    plt.bar(x, y)
+    plt.title(f"Frequency of Words in Yahoo News Search Results for {company}")
+    plt.xlabel("Word")
+    plt.xticks(rotation=90)
+    plt.ylabel("Frequency")
+    # plt.savefig(f"v-Word Frequency-YN-{company}.png", dpi=300, bbox_inches='tight')
+    plt.savefig(os.path.join('Visualizations', f"Word Frequency-YN-{company}.png"), dpi=300, bbox_inches='tight')
+    plt.show()
+    print("------")
+
+Information about the dataframe, for additional context.
+Commands:
+df.info()
+df.describe()
+
+Output:
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 98 entries, 0 to 97
+Data columns (total 4 columns):
+ #   Column   Non-Null Count  Dtype 
+---  ------   --------------  ----- 
+ 0   title    98 non-null     object
+ 1   summary  98 non-null     object
+ 2   source   98 non-null     object
+ 3   company  98 non-null     object
+dtypes: object(4)
+memory usage: 3.2+ KB
+title	summary	source	company
+count	98	98	98	98
+unique	88	88	1	9
+top	‘Fight with us’: KC medical students, doctors ...	Kansas City area medical students held a Satur...	Yahoo News	Block
+freq	2	2	98	20

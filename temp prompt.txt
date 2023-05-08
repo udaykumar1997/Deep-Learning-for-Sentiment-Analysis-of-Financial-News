@@ -1,29 +1,21 @@
-I have a certain code block which generates barplots of "most frequent words" observed. The prblem is, it generates the same graph for every single company. 
+Could you please take a look at the following code block too, it appears to be generating a bunch of random information and I'm not able to make any sense of it.
+Please draft a better, more sensible version of this code block.
 
 Code Block:
-for company in config.companies_of_interest:
-    # Join all titles and summaries into a single string
-    text = " ".join(df["title"].tolist() + df["summary"].tolist())
+for company in companies:
+    # Filter the data for the specific company
+    company_data = df[df['company'] == company]
 
-    # Split the text into individual words
-    words = text.split()
-    words = [word for word in words if word.lower() not in stop_words]
-    # Count the frequency of each word
-    word_counts = Counter(words)
-
-    # Create a bar chart of the 20 most common words
-    most_common_words = word_counts.most_common(20)
-    x = [word[0] for word in most_common_words]
-    y = [word[1] for word in most_common_words]
-    plt.bar(x, y)
-    plt.title(f"Frequency of Words in Yahoo News Search Results for {company}")
-    plt.xlabel("Word")
+    # Data visualization
+    plt.figure(figsize=(10, 6))
+    sns.countplot(y="title", data=company_data)
+    plt.xlabel("Number of Articles")
+    plt.ylabel("Article Title")
+    plt.title(f"Yahoo News Article Count Frequency for {company}")
     plt.xticks(rotation=90)
-    plt.ylabel("Frequency")
-    # plt.savefig(f"v-Word Frequency-YN-{company}.png", dpi=300, bbox_inches='tight')
-    plt.savefig(os.path.join('Visualizations', f"Word Frequency-YN-{company}.png"), dpi=300, bbox_inches='tight')
+    plt.savefig(f"v-Article Count Frequency-YN-{company}.png", dpi=300, bbox_inches='tight')
     plt.show()
-    print("------")
+
 
 Information about the dataframe, for additional context.
 Commands:
